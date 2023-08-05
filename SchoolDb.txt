@@ -1,0 +1,606 @@
+USE [master]
+GO
+/****** Object:  Database [SchoolDb]    Script Date: 5.08.2023 16:33:39 ******/
+CREATE DATABASE [SchoolDb]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'SchoolDb', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\SchoolDb.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'SchoolDb_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\SchoolDb_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [SchoolDb] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [SchoolDb].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [SchoolDb] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [SchoolDb] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [SchoolDb] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [SchoolDb] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [SchoolDb] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [SchoolDb] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [SchoolDb] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [SchoolDb] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [SchoolDb] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [SchoolDb] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [SchoolDb] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [SchoolDb] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [SchoolDb] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [SchoolDb] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [SchoolDb] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [SchoolDb] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [SchoolDb] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [SchoolDb] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [SchoolDb] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [SchoolDb] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [SchoolDb] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [SchoolDb] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [SchoolDb] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [SchoolDb] SET  MULTI_USER 
+GO
+ALTER DATABASE [SchoolDb] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [SchoolDb] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [SchoolDb] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [SchoolDb] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [SchoolDb] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [SchoolDb] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+ALTER DATABASE [SchoolDb] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [SchoolDb] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [SchoolDb]
+GO
+/****** Object:  Table [dbo].[Teachers]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Teachers](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[LessonId] [int] NOT NULL,
+	[StartingDate] [datetime] NOT NULL,
+	[EndingDate] [datetime] NULL,
+	[IsActive] [bit] NOT NULL,
+	[Graduated] [varchar](50) NOT NULL,
+	[ResponsibleManagerId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Teachers] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[TeachersGraduated]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[TeachersGraduated]
+AS
+SELECT Id, Name, Graduated From Teachers
+GO
+/****** Object:  Table [dbo].[Students]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Students](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[Class] [int] NOT NULL,
+	[BirthdayDate] [datetime] NOT NULL,
+	[Gender] [bit] NOT NULL,
+	[PhoneNumber] [varchar](13) NULL,
+	[StartingDate] [datetime] NOT NULL,
+	[EndingDate] [datetime] NULL,
+	[ParentId] [int] NOT NULL,
+	[Parent2Id] [int] NULL,
+	[HobbiesId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Students_1] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Lessons]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Lessons](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Lessons] [varchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Lessons] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ExamPoints]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExamPoints](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StudentId] [int] NOT NULL,
+	[LessonId] [int] NOT NULL,
+	[FirstPoints] [decimal](4, 2) NULL,
+	[SecondPoints] [decimal](4, 2) NULL,
+	[IsAccomplished] [bit] NULL,
+ CONSTRAINT [PK_ExamPoints] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[StudentsExams]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[StudentsExams]
+AS
+SELECT
+    S.Id AS StudentId,
+    S.Name,
+    L.Id AS LessonId,
+    L.Lessons,
+    E.FirstPoints,
+    E.SecondPoints,
+    E.IsAccomplished
+FROM
+    Students AS S
+JOIN
+    ExamPoints AS E ON S.Id = E.StudentId
+JOIN
+    Lessons AS L ON E.LessonId = L.Id
+JOIN
+    Teachers AS T ON L.Id = T.LessonId;
+GO
+/****** Object:  Table [dbo].[Classes]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Classes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StudentId] [int] NOT NULL,
+	[ClassName] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Classes] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Hobbies]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Hobbies](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TypesOfHobbies] [varchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Hobbies] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Managers]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Managers](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Responsibility] [varchar](20) NOT NULL,
+	[StartingDate] [datetime] NOT NULL,
+	[EndingDate] [datetime] NULL,
+	[IsActive] [bit] NOT NULL,
+	[Graduated] [varchar](50) NOT NULL,
+	[ResponsibileManagerId] [int] NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Managers] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Parent2Informations]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Parent2Informations](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Address] [varchar](max) NOT NULL,
+	[PhoneNumber] [varchar](13) NOT NULL,
+	[Email] [varchar](max) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Parent2Informations] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ParentsInformations]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ParentsInformations](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Address] [varchar](max) NOT NULL,
+	[PhoneNurmber] [varchar](13) NOT NULL,
+	[Email] [varchar](max) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_ParentsInformations] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[StudentsAdditionalResponsibilities]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[StudentsAdditionalResponsibilities](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StudentsId] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[TypeOfHobbiesId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_StudentsAdditionalResponsibilities] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[StudentsAdresses]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[StudentsAdresses](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StudentsId] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Address] [varchar](max) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_StudentsAdresses] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[StudentsPayments]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[StudentsPayments](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StudentsId] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Price] [money] NOT NULL,
+	[IsComplated] [bit] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_StudentsPayments] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[StudentsPhotos]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[StudentsPhotos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StudentsId] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[StudentsPhotosUrl] [varchar](max) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_StudentsPhotos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TeacherAdditionalResponsibilities]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TeacherAdditionalResponsibilities](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TeacherId] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[TypeOfHobbiesId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_TeacherAdditionalResponsibilities] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TennisClassMembers]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TennisClassMembers](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TypesOfHobbiesId] [int] NOT NULL,
+	[TeacherId] [int] NOT NULL,
+	[StudentId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_TennisClassMembers] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TheatreClassMembers]    Script Date: 5.08.2023 16:33:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TheatreClassMembers](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TypeOfHobbiesId] [int] NOT NULL,
+	[TeacherId] [int] NOT NULL,
+	[StudentId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+ CONSTRAINT [PK_TheatreClassMembers] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Classes]  WITH CHECK ADD  CONSTRAINT [FK_Classes_Students] FOREIGN KEY([StudentId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[Classes] CHECK CONSTRAINT [FK_Classes_Students]
+GO
+ALTER TABLE [dbo].[ExamPoints]  WITH CHECK ADD  CONSTRAINT [FK_ExamPoints_Lessons] FOREIGN KEY([LessonId])
+REFERENCES [dbo].[Lessons] ([Id])
+GO
+ALTER TABLE [dbo].[ExamPoints] CHECK CONSTRAINT [FK_ExamPoints_Lessons]
+GO
+ALTER TABLE [dbo].[ExamPoints]  WITH CHECK ADD  CONSTRAINT [FK_ExamPoints_Students] FOREIGN KEY([StudentId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[ExamPoints] CHECK CONSTRAINT [FK_ExamPoints_Students]
+GO
+ALTER TABLE [dbo].[Managers]  WITH CHECK ADD  CONSTRAINT [FK_Managers_Managers] FOREIGN KEY([ResponsibileManagerId])
+REFERENCES [dbo].[Managers] ([Id])
+GO
+ALTER TABLE [dbo].[Managers] CHECK CONSTRAINT [FK_Managers_Managers]
+GO
+ALTER TABLE [dbo].[Students]  WITH CHECK ADD  CONSTRAINT [FK_Students_Hobbies] FOREIGN KEY([HobbiesId])
+REFERENCES [dbo].[Hobbies] ([Id])
+GO
+ALTER TABLE [dbo].[Students] CHECK CONSTRAINT [FK_Students_Hobbies]
+GO
+ALTER TABLE [dbo].[Students]  WITH CHECK ADD  CONSTRAINT [FK_Students_Parent2Informations1] FOREIGN KEY([Parent2Id])
+REFERENCES [dbo].[Parent2Informations] ([Id])
+GO
+ALTER TABLE [dbo].[Students] CHECK CONSTRAINT [FK_Students_Parent2Informations1]
+GO
+ALTER TABLE [dbo].[Students]  WITH CHECK ADD  CONSTRAINT [FK_Students_ParentsInformations1] FOREIGN KEY([ParentId])
+REFERENCES [dbo].[ParentsInformations] ([Id])
+GO
+ALTER TABLE [dbo].[Students] CHECK CONSTRAINT [FK_Students_ParentsInformations1]
+GO
+ALTER TABLE [dbo].[StudentsAdditionalResponsibilities]  WITH CHECK ADD  CONSTRAINT [FK_StudentsAdditionalResponsibilities_Hobbies] FOREIGN KEY([TypeOfHobbiesId])
+REFERENCES [dbo].[Hobbies] ([Id])
+GO
+ALTER TABLE [dbo].[StudentsAdditionalResponsibilities] CHECK CONSTRAINT [FK_StudentsAdditionalResponsibilities_Hobbies]
+GO
+ALTER TABLE [dbo].[StudentsAdditionalResponsibilities]  WITH CHECK ADD  CONSTRAINT [FK_StudentsAdditionalResponsibilities_Students] FOREIGN KEY([StudentsId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[StudentsAdditionalResponsibilities] CHECK CONSTRAINT [FK_StudentsAdditionalResponsibilities_Students]
+GO
+ALTER TABLE [dbo].[StudentsAdresses]  WITH CHECK ADD  CONSTRAINT [FK_StudentsAdresses_Students] FOREIGN KEY([StudentsId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[StudentsAdresses] CHECK CONSTRAINT [FK_StudentsAdresses_Students]
+GO
+ALTER TABLE [dbo].[StudentsPayments]  WITH CHECK ADD  CONSTRAINT [FK_StudentsPayments_Students] FOREIGN KEY([StudentsId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[StudentsPayments] CHECK CONSTRAINT [FK_StudentsPayments_Students]
+GO
+ALTER TABLE [dbo].[StudentsPhotos]  WITH CHECK ADD  CONSTRAINT [FK_StudentsPhotos_Students] FOREIGN KEY([StudentsId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[StudentsPhotos] CHECK CONSTRAINT [FK_StudentsPhotos_Students]
+GO
+ALTER TABLE [dbo].[TeacherAdditionalResponsibilities]  WITH CHECK ADD  CONSTRAINT [FK_TeacherAdditionalResponsibilities_Hobbies] FOREIGN KEY([TypeOfHobbiesId])
+REFERENCES [dbo].[Hobbies] ([Id])
+GO
+ALTER TABLE [dbo].[TeacherAdditionalResponsibilities] CHECK CONSTRAINT [FK_TeacherAdditionalResponsibilities_Hobbies]
+GO
+ALTER TABLE [dbo].[TeacherAdditionalResponsibilities]  WITH CHECK ADD  CONSTRAINT [FK_TeacherAdditionalResponsibilities_Teachers] FOREIGN KEY([TeacherId])
+REFERENCES [dbo].[Teachers] ([Id])
+GO
+ALTER TABLE [dbo].[TeacherAdditionalResponsibilities] CHECK CONSTRAINT [FK_TeacherAdditionalResponsibilities_Teachers]
+GO
+ALTER TABLE [dbo].[Teachers]  WITH CHECK ADD  CONSTRAINT [FK_Teachers_Lessons] FOREIGN KEY([LessonId])
+REFERENCES [dbo].[Lessons] ([Id])
+GO
+ALTER TABLE [dbo].[Teachers] CHECK CONSTRAINT [FK_Teachers_Lessons]
+GO
+ALTER TABLE [dbo].[Teachers]  WITH CHECK ADD  CONSTRAINT [FK_Teachers_Managers] FOREIGN KEY([ResponsibleManagerId])
+REFERENCES [dbo].[Managers] ([Id])
+GO
+ALTER TABLE [dbo].[Teachers] CHECK CONSTRAINT [FK_Teachers_Managers]
+GO
+ALTER TABLE [dbo].[TennisClassMembers]  WITH CHECK ADD  CONSTRAINT [FK_TennisClassMembers_Hobbies] FOREIGN KEY([TypesOfHobbiesId])
+REFERENCES [dbo].[Hobbies] ([Id])
+GO
+ALTER TABLE [dbo].[TennisClassMembers] CHECK CONSTRAINT [FK_TennisClassMembers_Hobbies]
+GO
+ALTER TABLE [dbo].[TennisClassMembers]  WITH CHECK ADD  CONSTRAINT [FK_TennisClassMembers_Students] FOREIGN KEY([StudentId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[TennisClassMembers] CHECK CONSTRAINT [FK_TennisClassMembers_Students]
+GO
+ALTER TABLE [dbo].[TennisClassMembers]  WITH CHECK ADD  CONSTRAINT [FK_TennisClassMembers_Teachers] FOREIGN KEY([TeacherId])
+REFERENCES [dbo].[Teachers] ([Id])
+GO
+ALTER TABLE [dbo].[TennisClassMembers] CHECK CONSTRAINT [FK_TennisClassMembers_Teachers]
+GO
+ALTER TABLE [dbo].[TheatreClassMembers]  WITH CHECK ADD  CONSTRAINT [FK_TheatreClassMembers_Hobbies] FOREIGN KEY([TypeOfHobbiesId])
+REFERENCES [dbo].[Hobbies] ([Id])
+GO
+ALTER TABLE [dbo].[TheatreClassMembers] CHECK CONSTRAINT [FK_TheatreClassMembers_Hobbies]
+GO
+ALTER TABLE [dbo].[TheatreClassMembers]  WITH CHECK ADD  CONSTRAINT [FK_TheatreClassMembers_Students] FOREIGN KEY([StudentId])
+REFERENCES [dbo].[Students] ([Id])
+GO
+ALTER TABLE [dbo].[TheatreClassMembers] CHECK CONSTRAINT [FK_TheatreClassMembers_Students]
+GO
+ALTER TABLE [dbo].[TheatreClassMembers]  WITH CHECK ADD  CONSTRAINT [FK_TheatreClassMembers_Teachers] FOREIGN KEY([TeacherId])
+REFERENCES [dbo].[Teachers] ([Id])
+GO
+ALTER TABLE [dbo].[TheatreClassMembers] CHECK CONSTRAINT [FK_TheatreClassMembers_Teachers]
+GO
+/****** Object:  StoredProcedure [dbo].[AddStudent]    Script Date: 5.08.2023 16:33:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddStudent]
+    @Name VARCHAR(50),
+    @IsActive BIT,
+    @Class INT,
+    @BirthdayDate DATETIME,
+    @Gender BIT,
+    @PhoneNumber VARCHAR(13),
+    @StartingDate DATETIME,
+    @EndingDate DATETIME,
+    @ParentId INT,
+    @Parent2Id INT,
+    @HobbiesId INT,
+    @CreatedDate DATETIME,
+    @UpdatedDate DATETIME
+AS
+BEGIN
+    INSERT INTO Students (Name, IsActive, Class, BirthdayDate, Gender, PhoneNumber, StartingDate, EndingDate, ParentId, Parent2Id, HobbiesId, CreatedDate, UpdatedDate)
+    VALUES (@Name, @IsActive, @Class, @BirthdayDate, @Gender, @PhoneNumber, @StartingDate, @EndingDate, @ParentId, @Parent2Id, @HobbiesId, @CreatedDate, @UpdatedDate);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[ShowStudentWithParents]    Script Date: 5.08.2023 16:33:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ShowStudentWithParents]
+AS
+BEGIN
+    SELECT
+        S.Id AS StudentId,
+        S.Name AS StudentName,
+        P1.Id AS Parent1Id,
+        P1.Name AS Parent1Name,
+        P2.Id AS Parent2Id,
+        P2.Name AS Parent2Name
+    FROM
+        Students AS S
+    LEFT JOIN
+        ParentsInformations AS P1 ON S.ParentId = P1.Id
+    LEFT JOIN
+        Parent2Informations AS P2 ON S.Parent2Id = P2.Id;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[StudentsHobbiesDetails]    Script Date: 5.08.2023 16:33:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[StudentsHobbiesDetails]
+AS
+BEGIN
+	SELECT
+	S.Id AS StudentId,
+	S.Name AS StudentName,
+	H.Id AS HobbiesId,
+	H.TypesOfHobbies AS HobbiesName,
+	TAR.TeacherId AS TeacherId,
+	T.Name AS TeacherName
+	FROM
+		Students as S
+	LEFT JOIN 
+	Hobbies AS H ON S.HobbiesId=H.Id 
+	LEFT JOIN
+	TeacherAdditionalResponsibilities AS TAR ON H.Id=TAR.TypeOfHobbiesId
+	LEFT JOIN
+	Teachers AS T ON T.Id=TAR.TeacherId;
+END;
+GO
+USE [master]
+GO
+ALTER DATABASE [SchoolDb] SET  READ_WRITE 
+GO
