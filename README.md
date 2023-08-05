@@ -178,7 +178,7 @@ CREATE TABLE [dbo].[StudentsAdresses](
 	[UpdatedDate] [datetime] NULL,
 ```
 
-![StudentAdresses](https://github.com/arifozanaktas/SchoolDb/assets/139919845/3e794267-bf3c-429f-b86f-bdf31732cc0f)
+![StudentAdresses](https://github.com/arifozanaktas/SchoolDb/assets/139919845/b06bb732-96d3-4d39-a4d3-b10939c0cf20)
 
 ---
 
