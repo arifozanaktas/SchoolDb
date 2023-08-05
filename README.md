@@ -9,7 +9,7 @@ Okul bünyesinde bulunan öğrenci, veli, öğretmen, okul yönetimi, sınıflar
 
 ---
 
-*Students table ında öğrencilere ait temel veriler yer almaktadır.
+*Students table ında öğrencilere ait temel veriler yer almaktadır. Bir çok tablela ilişkilidir.
 ```tSQL
 CREATE TABLE [dbo].[Students](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[Students](
 
 ---
 
-*Teachers table ında öğretmenlere ait temel veriler yer almaktadır.
+*Teachers table ında öğretmenlere ait temel veriler yer almaktadır. Bir çok tablela ilişkilidir.
 ```tSQL
 CREATE TABLE [dbo].[Teachers](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
@@ -182,7 +182,7 @@ CREATE TABLE [dbo].[StudentsAdresses](
 
 ---
 
-*StudentsPayments table ında öğrenci-adres eşleştirme bilgilerine ait veriler yer almaktadır.
+*StudentsPayments table ında öğrenci-ödeme durumu eşleştirme bilgilerine ait veriler yer almaktadır.
 ```tSQL
 CREATE TABLE [dbo].[StudentsPayments](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
@@ -197,3 +197,163 @@ CREATE TABLE [dbo].[StudentsPayments](
 
 ![StudentsPayment](https://github.com/arifozanaktas/SchoolDb/assets/139919845/af085029-a632-4c83-8f85-510dccc47c44)
 
+
+---
+
+*StudentsPhotos table ında öğrenci-fotoğraf eşleştirme bilgilerine ait veriler yer almaktadır.
+```tSQL
+CREATE TABLE [dbo].[StudentsPhotos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StudentsId] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[StudentsPhotosUrl] [varchar](max) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+```
+
+![StudentPhoto](https://github.com/arifozanaktas/SchoolDb/assets/139919845/2f0cd52f-d9b3-480d-b79c-1e4751f6dabc)
+
+---
+
+*TeacherAdditionalResponsibilities table ında öğretmen-hobi eşleştirme bilgilerine ait veriler yer almaktadır.
+```tSQL
+CREATE TABLE [dbo].[TeacherAdditionalResponsibilities](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TeacherId] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[TypeOfHobbiesId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+```
+
+![TeacherAddi](https://github.com/arifozanaktas/SchoolDb/assets/139919845/305dadc4-98ff-4c47-a582-e64f446fa5ad)
+
+---
+
+*TennisClassMembers table ında tenis sınıfının üyeleri bilgilerini içeren veriler yer almaktadır.
+```tSQL
+CREATE TABLE [dbo].[TennisClassMembers](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TypesOfHobbiesId] [int] NOT NULL,
+	[TeacherId] [int] NOT NULL,
+	[StudentId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+```
+
+
+![tenis](https://github.com/arifozanaktas/SchoolDb/assets/139919845/c003f1ea-07a0-4f75-b5a8-ce854a16c3b5)
+
+---
+
+*TheatreClassMembers table ında tiyatro sınıfının üyeleri bilgilerini içeren veriler yer almaktadır.
+```tSQL
+CREATE TABLE [dbo].[TheatreClassMembers](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TypeOfHobbiesId] [int] NOT NULL,
+	[TeacherId] [int] NOT NULL,
+	[StudentId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+```
+
+![tenis](https://github.com/arifozanaktas/SchoolDb/assets/139919845/4e09dfcb-c5ca-44e7-99b5-7f0e7989c834)
+
+---
+---
+---
+---
+###Procedures and Views
+
+İlgili procedurede okula öğrenci kaydını içeren kodlar yer almaktadır.
+```tSQL
+CREATE PROCEDURE [dbo].[AddStudent]
+    @Name VARCHAR(50),
+    @IsActive BIT,
+    @Class INT,
+    @BirthdayDate DATETIME,
+    @Gender BIT,
+    @PhoneNumber VARCHAR(13),
+    @StartingDate DATETIME,
+    @EndingDate DATETIME,
+    @ParentId INT,
+    @Parent2Id INT,
+    @HobbiesId INT,
+    @CreatedDate DATETIME,
+    @UpdatedDate DATETIME
+AS
+BEGIN
+    INSERT INTO Students (Name, IsActive, Class, BirthdayDate, Gender, PhoneNumber, StartingDate, EndingDate, ParentId, Parent2Id, HobbiesId, CreatedDate, UpdatedDate)
+    VALUES (@Name, @IsActive, @Class, @BirthdayDate, @Gender, @PhoneNumber, @StartingDate, @EndingDate, @ParentId, @Parent2Id, @HobbiesId, @CreatedDate, @UpdatedDate);
+END;
+```
+Procedure devamında öğrenci kaydı başarıyla tamamlanmıştır.
+
+![Procedure1](https://github.com/arifozanaktas/SchoolDb/assets/139919845/ee939bf1-07b4-4c47-9ca9-34040be9c823)
+
+---
+---
+İlgili procedurede öğrenci-veli temel bilgilerinin görülmesi amaçkı yazılmıştır.
+```tSQL
+CREATE PROCEDURE [dbo].[ShowStudentWithParents]
+AS
+BEGIN
+    SELECT
+        S.Id AS StudentId,
+        S.Name AS StudentName,
+        P1.Id AS Parent1Id,
+        P1.Name AS Parent1Name,
+        P2.Id AS Parent2Id,
+        P2.Name AS Parent2Name
+    FROM
+        Students AS S
+    LEFT JOIN
+        ParentsInformations AS P1 ON S.ParentId = P1.Id
+    LEFT JOIN
+        Parent2Informations AS P2 ON S.Parent2Id = P2.Id;
+END;
+```
+![Procedure2](https://github.com/arifozanaktas/SchoolDb/assets/139919845/4bf01c8d-8a80-4e6c-9f27-04d6a8b16d32)
+
+---
+---
+
+İlgili procedurede öğrenci hobi sorumlu öğretmen detayları görülmektedir.
+```tSQL
+CREATE PROCEDURE [dbo].[StudentsHobbiesDetails]
+AS
+BEGIN
+	SELECT
+	S.Id AS StudentId,
+	S.Name AS StudentName,
+	H.Id AS HobbiesId,
+	H.TypesOfHobbies AS HobbiesName,
+	TAR.TeacherId AS TeacherId,
+	T.Name AS TeacherName
+	FROM
+		Students as S
+	LEFT JOIN 
+	Hobbies AS H ON S.HobbiesId=H.Id 
+	LEFT JOIN
+	TeacherAdditionalResponsibilities AS TAR ON H.Id=TAR.TypeOfHobbiesId
+	LEFT JOIN
+	Teachers AS T ON T.Id=TAR.TeacherId;
+END;
+```
+![Procedure3](https://github.com/arifozanaktas/SchoolDb/assets/139919845/5b2b8727-1589-4944-8ccd-c7be0d1507b0)
+
+---
+---
+
+Aşağıda belirtilen View görüntüsünde öğrenci-ders-sınav notları-başarı durumu bilgileri çekilmiştir.
+
+
+![View 2](https://github.com/arifozanaktas/SchoolDb/assets/139919845/5ad7b2ce-4609-4002-adc5-47a05322f878)
+
+---
+---
+
+Aşağıda belirtilen View görüntüsünde öğretmen ve mezun olduğu okul bilgileri çekilmiştir.
+
+
+![View1](https://github.com/arifozanaktas/SchoolDb/assets/139919845/97a8cfd4-2650-4687-873a-198d3b2a57fc)
